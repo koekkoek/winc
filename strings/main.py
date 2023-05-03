@@ -10,13 +10,11 @@ player_scored2 = "Marco van Basten"
 # Add scoring minutes
 goal_0 = 32
 goal_1 = 54
-goal_0_str = str(goal_0)
-goal_1_str = str(goal_1)
 
 # Scoring minute per player
-scorers = player_scored1 + " " + goal_0_str + ", " + player_scored2 + " " + goal_1_str
+scorers = player_scored1 + " " + str(goal_0) + ", " + player_scored2 + " " + str(goal_1)
 
-report = player_scored1 + " scored in the " + goal_0_str + "nd minute\n" + player_scored2 + " scored in the " + goal_1_str + "th minute"
+report = f"{player_scored1} scored in the {goal_0}nd minute\n{player_scored2} scored in the {goal_1}th minute"
 print(report)
 
 # Slicing and find to isolate and store the player's first name.
@@ -24,7 +22,7 @@ player = "Ronald Koeman"
 first_name = player[:player.find(" ")]
 
 # Find, slicing and len to isolate and store the length of last name.
-# last_name_len = len(player[(player.find(" ")+1):]) = in 1 sentence. The following is clearer:
+# last_name_len = len(player[player.find(" ")+1:]) = in 1 sentence. The following is clearer:
 last_name = player[player.find(" ")+1:]
 last_name_len = len(last_name)
 
@@ -32,8 +30,8 @@ last_name_len = len(last_name)
 name_short = first_name[0] + ". " + last_name
 
 # Make chants
-x = len(first_name) - 1
-chant = ((first_name + "! ") * x + first_name + "!")
+make_chants = f"{first_name}! " * len(first_name)
+chant = make_chants[:-1]
 print(chant)
 
 # Check if last character isn't a space
