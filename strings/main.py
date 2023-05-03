@@ -10,11 +10,13 @@ player_scored2 = "Marco van Basten"
 # Add scoring minutes
 goal_0 = 32
 goal_1 = 54
+goal_0_str = str(goal_0)
+goal_1_str = str(goal_1)
 
 # Scoring minute per player
-scorers = player_scored1 + " " + str(goal_0) + ", " + player_scored2 + " " + str(goal_1)
+scorers = player_scored1 + " " + goal_0_str + ", " + player_scored2 + " " + goal_1_str
 
-report = player_scored1 + " scored in the " + str(goal_0) + "nd minute\n" + player_scored2 + " scored in the " + str(goal_1) + "th minute"
+report = player_scored1 + " scored in the " + goal_0_str + "nd minute\n" + player_scored2 + " scored in the " + goal_1_str + "th minute"
 print(report)
 
 # Slicing and find to isolate and store the player's first name.
