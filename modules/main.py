@@ -5,6 +5,8 @@ __human_name__ = "modules"
 # Add your code after this line
 import this
 
+print(this)
+
 
 def wait(seconds):
     import time
