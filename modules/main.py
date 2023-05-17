@@ -5,7 +5,7 @@ __human_name__ = "modules"
 # Add your code after this line
 import this
 
-print(this)
+a = this
 
 
 def wait(seconds):
@@ -35,8 +35,15 @@ def platform():
     return sys.platform
 
 
+def supergreeting_wrapper(name):
+    import greet
+
+    return greet.supergreeting(name)
+
+
 # Call functions
 # wait(2)
 # print(my_sin(2))
 # print(iso_now())
 # print(platform())
+# supergreeting_wrapper("michel")
