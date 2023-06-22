@@ -6,15 +6,12 @@ __human_name__ = "classes"
 # Add your code after this line
 class Player:
     def __init__(self, name, speed, endurance, accuracy):
-        if (
-            speed < 0
-            or speed > 1
-            or endurance < 0
-            or endurance > 1
-            or accuracy < 0
-            or accuracy > 1
-        ):
-            raise ValueError("Speed, endurance and accuracy should be between 0 and 1.")
+        for x in [speed, endurance, accuracy]:
+            if x > 1 or x < 0:
+                raise ValueError(
+                    "Speed, endurance and accuracy should be between 0 and 1."
+                )
+
         self.name = name
         self.speed = speed
         self.endurance = endurance
@@ -24,20 +21,12 @@ class Player:
         return f"Hello everyone, my name is {self.name}."
 
     def strength(self):
-        if self.speed > self.endurance and self.speed > self.accuracy:
-            return ("speed", self.speed)
-        elif self.speed == self.endurance and self.speed > self.accuracy:
-            return ("speed", self.speed)
-        elif self.speed == self.accuracy and self.speed > self.endurance:
-            return ("speed", self.speed)
-        elif self.endurance > self.speed and self.endurance > self.accuracy:
-            return ("endurance", self.endurance)
-        elif self.endurance > self.speed and self.endurance == self.accuracy:
-            return ("endurance", self.endurance)
-        elif self.accuracy > self.speed and self.accuracy > self.endurance:
-            return ("accuracy", self.accuracy)
-        elif self.accuracy > self.speed and self.accuracy == self.endurance:
-            return ("accuracy", self.accuracy)
+        best = (None, -1)
+        for attribute in ["speed", "endurance", "accuracy"]:
+            value = getattr(self, attribute)
+            if value > best[1]:
+                best = (attribute, value)
+        return best
 
 
 class Commentator:
@@ -65,8 +54,8 @@ class Commentator:
         elif score_b > score_a:
             return name_b
         elif score_a == score_b:
-            strength_a = object_a.strength()
-            strength_b = object_b.strength()
+            strength_a = object_a.strength()[1]
+            strength_b = object_b.strength()[1]
 
             if strength_a > strength_b:
                 return name_a
