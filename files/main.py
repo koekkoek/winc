@@ -1,6 +1,31 @@
 __winc_id__ = "ae539110d03e49ea8738fd413ac44ba8"
 __human_name__ = "files"
 
+import os
+import shutil
+from zipfile import ZipFile
+
+
+base_dir = os.getcwd()
+cache_dir = os.path.join(base_dir, "cache")
+zip_name = "data.zip"
+
+
+def clean_cache():
+    if os.path.exists(cache_dir):
+        shutil.rmtree(cache_dir)
+    os.mkdir(cache_dir)
+
+
+def cache_zip(zip_path, cache_path):
+    with ZipFile(zip_path, "r") as zip:
+        zip.extractall(cache_dir)
+
+
+# Calling the functions
+# clean_cache()
+
+"""
 
 import os
 import shutil
@@ -51,3 +76,4 @@ def find_password(list):
                     split = line.split()
                     # En nu het item na password selecteren om te returnen
                     return split[1]
+"""
