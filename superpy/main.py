@@ -3,7 +3,7 @@ import argparse
 import csv
 from datetime import date
 from tabulate import tabulate
-from functions import new_id, give_bought_id, get_bought_id, add_sold_item, reset_date, check_if_sold
+from functions import new_id, give_bought_id, get_bought_id, add_sold_item, reset_date, check_if_sold, count_by_product_name
 
 # Do not change these lines.
 __winc_id__ = "a2bc36ea784242e4989deb157d527ba0"
@@ -50,6 +50,7 @@ def main():
     parser_report_inventory = subparser_report.add_parser("inventory", help="Get inventory report")
     parser_report_inventory.add_argument("--now", help="Get today's inventory report")
     parser_report_inventory.add_argument("--yesterday", help="Get yesterday's inventory report")
+    parser_report_inventory.add_argument("--by_type", action="store_true", help="Current items ordered by product type")
 
     # Create sell parser
     sell_parser = subparsers.add_parser(
@@ -118,13 +119,19 @@ def main():
                 # Not yet sold? Then add list to sold.csv
                 add_sold_item(sold_product)
 
-    elif args.command == "report":
-        if args.get_report == "inventory":
-            # Make a report of current inventory.
+    # elif args.command == "report":
+    elif args.get_report == "inventory":
+        # Make report for how many of each type of product the supermarket holds currently;
+        if args.by_type is True:
+            count_by_product_name()
+        # Make a report of current inventory.
+        else:
             with open(bought_csv_path) as file:
                 items = csv.reader(file)
                 list_header = next(items)
                 print(tabulate(items, headers=list_header, tablefmt="grid"))
+        
+        
 
 
 if __name__ == "__main__":
