@@ -50,7 +50,7 @@ def main():
     parser_report_inventory = subparser_report.add_parser("inventory", help="Get inventory report")
     parser_report_inventory.add_argument("--now", help="Get today's inventory report")
     parser_report_inventory.add_argument("--yesterday", help="Get yesterday's inventory report")
-    parser_report_inventory.add_argument("--by_type", action="store_true", help="Current items ordered by product type")
+    parser_report_inventory.add_argument("--by_type", action="store_true", help="Current items in bought.csv file, ordered by product name")
 
     # Create sell parser
     sell_parser = subparsers.add_parser(
