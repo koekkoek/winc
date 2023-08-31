@@ -15,7 +15,7 @@ def test_give_bought_id():
 
 
 def test_get_bought_id():
-    assert get_bought_id("tomatoooooo") == None
+    assert get_bought_id("tomatoooooo") is None
     assert get_bought_id("tomato") == '24'  # Change when edited
     assert get_bought_id("banana") == '27'  # Change when edited
 
@@ -35,6 +35,5 @@ def test_reset_date():
 
 
 def test_advance_time():
-    assert advance_time(0) == False
-    assert advance_time(-2) == False
-
+    assert advance_time(0) is False
+    assert advance_time(-2) is False
