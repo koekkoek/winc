@@ -1,5 +1,6 @@
 import csv
 from datetime import date, datetime, timedelta
+from tabulate import tabulate
 
 bought_path = "data\\bought.csv"
 sell_path = "data\\sold.csv"
@@ -101,7 +102,7 @@ def check_if_sold(product_sold_id):
             if row['bought_id'] == product_sold_id:
                 # If it is in the list. Then switch 'not_yet_sold' to False.
                 not_yet_sold = False
-                print("\nATTENTION: Product already on sold list.\n")
+                # print("\nATTENTION: Product already on sold list.\n") # TO DO: melding elders toevoegen.
                 break
         return not_yet_sold
 
@@ -128,6 +129,21 @@ def count_by_product_name():
         for k, v in product_per_type.items():
             print(f"{k}: {v}")
         print("\n============================")
+
+
+def get_todays_inventory():
+    """Get today's inventory and show to user"""
+    inventory = []
+    date = date_to_datetime(get_current_date())
+    with open(bought_path) as file:
+        items = csv.DictReader(file)
+        for item in items:
+            item_date = datetime.strptime(item['expiration_date'], '%Y-%m-%d').date()
+            # Get items in bought.csv who aren't expired
+            # And check if item isn't in sold.csv list
+            if item_date > date and check_if_sold(item['id']):
+                inventory.append(item)
+    print(tabulate(inventory, headers="keys", tablefmt="grid"))
 
 
 def reset_date():
@@ -162,6 +178,20 @@ def advance_time(number_of_days: int):
         return msg
 
 
+def get_current_date():
+    """Open current_day.txt and return date"""
+    with open(date_path) as file:
+        date = file.read()
+        return date
+
+
+def date_to_datetime(date):
+    """Formate date text to datetime object"""
+    # TO DO: Check users input / try?
+    dateformat = datetime.strptime(date, '%Y-%m-%d').date()
+    return dateformat
+
+
 if __name__ == "__main__":
     # print(give_bought_id())
     # print(latest_product_id())
@@ -170,4 +200,7 @@ if __name__ == "__main__":
     # reset_date()
     # print(check_if_sold('27'))
     # count_by_product_name()
-    print(advance_time(2))
+    # print(advance_time(2))
+    get_todays_inventory()
+    # print(get_current_date())
+    #print(date_to_datetime("2022-01-02"))
