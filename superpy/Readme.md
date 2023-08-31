@@ -1,6 +1,9 @@
 # SuperPy
 SuperPy is a command-line based inventory management tool designed to keep track of supermarket products. It provides features to record buying and selling activities, produce various reports, and maintain the internal date system for managing transactions.
 
+# Install instructions
+* Install Tabulate via command: pip install tabulate
+
 ## Features
 Some important features:
 * Feature 1
@@ -26,6 +29,8 @@ Some examples on how to use Superpy.
 
     python .\main.py sell --product_name \<name> --price \<price>
 
+    Note: you can's sell an item that's already sold.
+
 ## Data storage
 The files where all the data is stored:
 | File name | Columns |
@@ -34,9 +39,6 @@ The files where all the data is stored:
 | sold.cxv | id, ....
 | current_day.txt | Day |
 | id.txt | id |
-
-# Install
-* Install Tabulate via command: pip install tabulate
 
 # Author
 Michel
