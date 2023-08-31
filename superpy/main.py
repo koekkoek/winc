@@ -11,7 +11,8 @@ from functions import (
     reset_date,
     check_if_sold,
     count_by_product_name,
-    advance_time
+    advance_time,
+    get_todays_inventory
 )
 
 # Do not change these lines.
@@ -34,16 +35,24 @@ def main():
     subparsers = parser.add_subparsers(dest="command")
 
     # Create parser for advancing time
-    parser.add_argument("--advance_time", type=int, help="Use to add days to advance current day")
+    parser.add_argument(
+        "--advance_time", type=int,
+        help="Use to add days to advance current day")
 
     # Create buy parser
     buy_parser = subparsers.add_parser(
         "buy", help="Use buy to add products to your inventory."
     )
 
-    buy_parser.add_argument("--product_name", type=str, help="Name of current product")
-    buy_parser.add_argument("--product_price", type=float, help="Price of current product")
-    buy_parser.add_argument("--expiration_date", type=str, help="Date of which current product expires")
+    buy_parser.add_argument(
+        "--product_name", type=str,
+        help="Name of current product")
+    buy_parser.add_argument(
+        "--product_price", type=float,
+        help="Price of current product")
+    buy_parser.add_argument(
+        "--expiration_date", type=str,
+        help="Date of which current product expires")
 
     # Create reset date parser
     date_parser = subparsers.add_parser(
@@ -59,17 +68,26 @@ def main():
     subparser_report = report_parser.add_subparsers(dest="get_report")
 
     # Create report inventory parser
-    parser_report_inventory = subparser_report.add_parser("inventory", help="Get inventory report")
-    parser_report_inventory.add_argument("--now", help="Get today's inventory report")
-    parser_report_inventory.add_argument("--yesterday", help="Get yesterday's inventory report")
-    parser_report_inventory.add_argument("--by_type", action="store_true", help="Current items in bought.csv file, ordered by product name")
+    parser_report_inventory = subparser_report.add_parser(
+        "inventory", help="Get inventory report")
+    parser_report_inventory.add_argument(
+        "--now", action="store_true",
+        help="Get today's inventory report")
+    parser_report_inventory.add_argument(
+        "--yesterday", action="store_true",
+        help="Get yesterday's inventory report")
+    parser_report_inventory.add_argument(
+        "--by_type", action="store_true",
+        help="Current items in bought.csv file, ordered by product name")
 
     # Create sell parser
     sell_parser = subparsers.add_parser(
         "sell", help="Use to sell a product."
     )
-    sell_parser.add_argument("--product_name", type=str, help="Name of sold product")
-    sell_parser.add_argument("--price", type=float, help="Price of sold product")
+    sell_parser.add_argument(
+        "--product_name", type=str, help="Name of sold product")
+    sell_parser.add_argument(
+        "--price", type=float, help="Price of sold product")
 
     # Parse arguments
     args = parser.parse_args()
@@ -136,10 +154,14 @@ def main():
 
     # elif args.command == "report":
     elif args.get_report == "inventory":
-        # Make report for how many of each type of product the supermarket holds currently;
+        # Make report for how many of each type of product
+        # the supermarket holds currently
         if args.by_type is True:
             count_by_product_name()
-        # Make a report of current inventory.
+        # Make a report of current inventory
+        elif args.now:
+            get_todays_inventory()
+        # Print a list of all items in inventory
         else:
             with open(bought_csv_path) as file:
                 items = csv.reader(file)
