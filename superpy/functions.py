@@ -1,5 +1,5 @@
 import csv
-from datetime import date
+from datetime import date, datetime, timedelta
 
 bought_path = "data\\bought.csv"
 sell_path = "data\\sold.csv"
@@ -71,6 +71,7 @@ def new_id():
 
 
 def add_sold_item(sold_product):
+    """Function to sell a product and append it in sold.csv file"""
     with open(sell_path, mode="a") as file:
         # Pass file object to csv.writer
         add_sold_product = csv.writer(file, delimiter=',', lineterminator='\n')
@@ -106,6 +107,7 @@ def check_if_sold(product_sold_id):
 
 
 def count_by_product_name():
+    """Function to count quantity by product name"""
     with open(bought_path) as file:
         # Make a list and dict
         product_type = []
@@ -129,11 +131,35 @@ def count_by_product_name():
 
 
 def reset_date():
+    """Function to reset date to current date"""
     with open(date_path, mode="w") as file:
         new_date = date.today().strftime('%Y-%m-%d')
         file.write(new_date)
         print(f"Current date succesfully updated: {new_date}")
         return new_date
+
+
+def advance_time(number_of_days: int):
+    """Function to advance days with users input"""
+    if number_of_days <= 0:
+        print("Please use a positive number.")
+        return False
+    with open(date_path, mode="r+") as file:
+        # Get current date
+        current_date = file.read()
+        # Get current date in datetime format
+        date_datetime = datetime.strptime(current_date, '%Y-%m-%d').date()
+        # Add days
+        new_date = date_datetime + timedelta(days=number_of_days)
+        # Change datetime format back to string
+        new_date = new_date.strftime('%Y-%m-%d')
+        # Write new date in file
+        file.seek(0)
+        file.write(new_date)
+        # Return message
+        msg = f"Numbers of days added: {number_of_days}.\n"
+        msg += f"New current date: {new_date}"
+        return msg
 
 
 if __name__ == "__main__":
@@ -143,4 +169,5 @@ if __name__ == "__main__":
     # print(get_bought_id("tomato"))
     # reset_date()
     # print(check_if_sold('27'))
-    count_by_product_name()
+    # count_by_product_name()
+    print(advance_time(2))
