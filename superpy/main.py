@@ -3,7 +3,16 @@ import argparse
 import csv
 from datetime import date
 from tabulate import tabulate
-from functions import new_id, give_bought_id, get_bought_id, add_sold_item, reset_date, check_if_sold, count_by_product_name
+from functions import (
+    new_id,
+    give_bought_id,
+    get_bought_id,
+    add_sold_item,
+    reset_date,
+    check_if_sold,
+    count_by_product_name,
+    advance_time
+)
 
 # Do not change these lines.
 __winc_id__ = "a2bc36ea784242e4989deb157d527ba0"
@@ -23,6 +32,9 @@ def main():
 
     # Create subparsers
     subparsers = parser.add_subparsers(dest="command")
+
+    # Create parser for advancing time
+    parser.add_argument("--advance_time", type=int, help="Use to add days to advance current day")
 
     # Create buy parser
     buy_parser = subparsers.add_parser(
@@ -62,7 +74,10 @@ def main():
     # Parse arguments
     args = parser.parse_args()
 
-    if args.command == "reset_date":
+    if args.advance_time:
+        advance_time(args.advance_time)
+
+    elif args.command == "reset_date":
         reset_date()
 
     elif args.command == "buy":
@@ -130,8 +145,6 @@ def main():
                 items = csv.reader(file)
                 list_header = next(items)
                 print(tabulate(items, headers=list_header, tablefmt="grid"))
-        
-        
 
 
 if __name__ == "__main__":
