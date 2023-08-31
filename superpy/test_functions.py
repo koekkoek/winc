@@ -1,4 +1,11 @@
-from functions import give_bought_id, get_bought_id, latest_product_id, new_id, reset_date
+from functions import (
+    give_bought_id,
+    get_bought_id,
+    latest_product_id,
+    new_id,
+    reset_date,
+    advance_time
+)
 from datetime import date
 
 
@@ -22,5 +29,12 @@ def test_new_id():
     assert type(int(new_id())) == int
     assert new_id() >= 0
 
+
 def test_reset_date():
     assert reset_date() == str(date.today())
+
+
+def test_advance_time():
+    assert advance_time(0) == False
+    assert advance_time(-2) == False
+
