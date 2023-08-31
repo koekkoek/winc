@@ -127,6 +127,7 @@ def count_by_product_name():
             print(f"{k}: {v}")
         print("\n============================")
 
+
 def reset_date():
     with open(date_path, mode="w") as file:
         new_date = date.today().strftime('%Y-%m-%d')
