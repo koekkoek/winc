@@ -105,6 +105,28 @@ def check_if_sold(product_sold_id):
         return not_yet_sold
 
 
+def count_by_product_name():
+    with open(bought_path) as file:
+        # Make a list and dict
+        product_type = []
+        product_per_type = {}
+        products = csv.reader(file)
+        # Iterate over products and append them in list
+        for product in products:
+            product_type.append(product[1])
+        # Iterate over list and add them in dict
+        for item in product_type[1:]:
+            if item not in product_per_type:
+                product_per_type[item] = 1
+            elif item in product_per_type:
+                product_per_type[item] = product_per_type[item]+1
+        # Print results
+        print("============================")
+        print("Current quantity per product:\n")
+        for k, v in product_per_type.items():
+            print(f"{k}: {v}")
+        print("\n============================")
+
 def reset_date():
     with open(date_path, mode="w") as file:
         new_date = date.today().strftime('%Y-%m-%d')
@@ -119,4 +141,5 @@ if __name__ == "__main__":
     # new_id()
     # print(get_bought_id("tomato"))
     # reset_date()
-    print(check_if_sold('27'))
+    # print(check_if_sold('27'))
+    count_by_product_name()
