@@ -21,15 +21,28 @@ Some examples on how to use Superpy.
 
     python .\main.py buy --product_name \<name> --product_price \<price> --amount \<amount> --expiration_date \<date>
 
-2. **Show list of total inventory:**
+2. **Show list of inventory:**
 
-    python .\main.py report inventory
+    * <u>Total list:</u> python .\main.py report inventory
+    
+    * <u>Today's list (excluding expirated and sold items):</u> python main.py report inventory --now
 
 3. **Sell an item:**
 
     python .\main.py sell --product_name \<name> --price \<price>
 
     Note: you can's sell an item that's already sold.
+
+4. **Show how many items in inventory by product name:**
+
+    python main.py report inventory --by_type
+
+5. **Change the date.**
+    Use one of the following commands:
+
+    * <u>Reset the date to current day:</u> python main.py reset_date
+    
+    * <u>Advance the day to future day:</u> python main.py --advance_time \<numbers of days>
 
 ## Data storage
 The files where all the data is stored:
