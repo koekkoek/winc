@@ -12,7 +12,8 @@ from functions import (
     check_if_sold,
     count_by_product_name,
     advance_time,
-    get_todays_inventory
+    get_todays_inventory,
+    get_yesterdays_inventory
 )
 
 # Do not change these lines.
@@ -161,6 +162,9 @@ def main():
         # Make a report of current inventory
         elif args.now:
             get_todays_inventory()
+        # Make a report of yesterday's inventory.
+        elif args.yesterday:
+            get_yesterdays_inventory()
         # Print a list of all items in inventory
         else:
             with open(bought_csv_path) as file:
