@@ -13,7 +13,8 @@ from functions import (
     count_by_product_name,
     advance_time,
     get_todays_inventory,
-    get_yesterdays_inventory
+    get_yesterdays_inventory,
+    get_revenue_report
 )
 
 # Do not change these lines.
@@ -68,6 +69,15 @@ def main():
     # Create report suberparser
     subparser_report = report_parser.add_subparsers(dest="get_report")
 
+    # Create sell parser
+    sell_parser = subparsers.add_parser(
+        "sell", help="Use to sell a product."
+    )
+    sell_parser.add_argument(
+        "--product_name", type=str, help="Name of sold product")
+    sell_parser.add_argument(
+        "--price", type=float, help="Price of sold product")
+
     # Create report inventory parser
     parser_report_inventory = subparser_report.add_parser(
         "inventory", help="Get inventory report")
@@ -81,14 +91,18 @@ def main():
         "--by_type", action="store_true",
         help="Current items in bought.csv file, ordered by product name")
 
-    # Create sell parser
-    sell_parser = subparsers.add_parser(
-        "sell", help="Use to sell a product."
+    # Create revenue parser
+    revenue_report_parser = subparser_report.add_parser(
+        "revenue", help="Use to get revenue")
+    revenue_report_parser.add_argument(
+        "--today", action="store_true",
+        help="Get today's revenue report")
+    revenue_report_parser.add_argument(
+        "--yesterday", action="store_true",
+        help="Get yesterday's revenue report")
+    revenue_report_parser.add_argument(
+        "--date", help="Get revenue report of specific date"
     )
-    sell_parser.add_argument(
-        "--product_name", type=str, help="Name of sold product")
-    sell_parser.add_argument(
-        "--price", type=float, help="Price of sold product")
 
     # Parse arguments
     args = parser.parse_args()
@@ -100,8 +114,6 @@ def main():
         reset_date()
 
     elif args.command == "buy":
-        # To do: checking if user gives 3 arguments?
-
         # Make a list of user input
         new_product = [
             new_id(),
@@ -153,7 +165,6 @@ def main():
                 # Not yet sold? Then add list to sold.csv
                 add_sold_item(sold_product)
 
-    # elif args.command == "report":
     elif args.get_report == "inventory":
         # Make report for how many of each type of product
         # the supermarket holds currently
@@ -172,6 +183,27 @@ def main():
                 list_header = next(items)
                 print(tabulate(items, headers=list_header, tablefmt="grid"))
 
+    elif args.get_report == "revenue":
+        if args.today:
+            revenue = get_revenue_report("today")
+            if revenue == 0:
+                print("We haven't sold anything yet today.")
+            elif revenue > 0:
+                print(f"Today's revenue so far: {revenue}")
+        elif args.yesterday:
+            revenue = get_revenue_report("yesterday")
+            if revenue == 0:
+                print("We haven't sold anything yesterday.")
+            elif revenue > 0:
+                print(f"Yesterday's revenue: {revenue}")
+        elif args.date:
+            revenue = get_revenue_report(args.date)
+            if revenue == 0:
+                print(f"Revenue on {args.date}: € 0,-")
+            elif revenue > 0:
+                print(f"Revenue on {args.date}: {revenue}")
+        else:
+            revenue_report_parser.print_help()
 
 if __name__ == "__main__":
     main()

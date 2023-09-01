@@ -139,13 +139,20 @@ def get_todays_inventory():
     with open(bought_path) as file:
         items = csv.DictReader(file)
         for item in items:
-            item_date = datetime.strptime(
+            item_buy_date = datetime.strptime(
+                item['buy_date'], '%Y-%m-%d').date()
+            item_expiration_date = datetime.strptime(
                 item['expiration_date'], '%Y-%m-%d').date()
             # Get items in bought.csv who aren't expired
             # And check if item isn't in sold.csv list
-            if item_date > date and check_if_sold(item['id']):
+            if date > item_buy_date and (
+                item_expiration_date > date) and (
+                    check_if_sold(item['id'])):
                 inventory.append(item)
-    print(tabulate(inventory, headers="keys", tablefmt="grid"))
+    if inventory:
+        print(tabulate(inventory, headers="keys", tablefmt="grid"))
+    else:
+        print("There is nothing in today's inventory.")
 
 
 def get_yesterdays_inventory():
@@ -155,13 +162,41 @@ def get_yesterdays_inventory():
     with open(bought_path) as file:
         items = csv.DictReader(file)
         for item in items:
-            item_date = datetime.strptime(
+            item_buy_date = datetime.strptime(
+                item['buy_date'], '%Y-%m-%d').date()
+            item_expiration_date = datetime.strptime(
                 item['expiration_date'], '%Y-%m-%d').date()
             # Get items in bought.csv who aren't expired
             # And check if item isn't in sold.csv list
-            if item_date > date and check_if_sold(item['id']):
+            if date > item_buy_date and (
+                item_expiration_date > date) and (
+                    check_if_sold(item['id'])):
                 inventory.append(item)
-    print(tabulate(inventory, headers="keys", tablefmt="grid"))
+    if inventory:
+        print(tabulate(inventory, headers="keys", tablefmt="grid"))
+    else:
+        print("There is nothing in yesterday's inventory.")
+
+
+def get_revenue_report(when):
+    total_revenue = 0
+    if when == "today":
+        date = get_current_date()
+    elif when == "yesterday":
+        date = date_to_datetime(get_current_date())
+        date = date - timedelta(days=1)
+    else:
+        date = datetime.strptime(when, '%Y-%m-%d').date()
+    # Open sold file
+    with open(sell_path) as sell_file:
+        sold_items = csv.DictReader(sell_file)
+        # Iterate over sold items
+        for item in sold_items:
+            # Check is sold date is the same as today
+            if item['sell_date'] == str(date):
+                total_revenue += float(item['sell_price'])
+    return total_revenue
+
 
 def reset_date():
     """Function to reset date to current date"""
@@ -218,6 +253,15 @@ if __name__ == "__main__":
     # print(check_if_sold('27'))
     # count_by_product_name()
     # print(advance_time(2))
-    get_todays_inventory()
+    # get_todays_inventory()
     # print(get_current_date())
     # print(date_to_datetime("2022-01-02"))
+    get_revenue_report("2023-10-01")
+
+
+"""
+# Open bought file
+    with open(bought_path) as bought_file:
+        # Make list of bought file dictionary
+        bought_items = list(csv.DictReader(bought_file))
+"""
