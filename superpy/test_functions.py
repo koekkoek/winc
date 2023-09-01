@@ -4,7 +4,8 @@ from functions import (
     latest_product_id,
     new_id,
     reset_date,
-    advance_time
+    advance_time,
+    date_to_datetime
 )
 from datetime import date
 
@@ -37,3 +38,8 @@ def test_reset_date():
 def test_advance_time():
     assert advance_time(0) is False
     assert advance_time(-2) is False
+
+
+def test_date_to_datetime():
+    check = date_to_datetime("2023-10-01")
+    assert isinstance(check, date)
