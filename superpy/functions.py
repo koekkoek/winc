@@ -102,7 +102,8 @@ def check_if_sold(product_sold_id):
             if row['bought_id'] == product_sold_id:
                 # If it is in the list. Then switch 'not_yet_sold' to False.
                 not_yet_sold = False
-                # print("\nATTENTION: Product already on sold list.\n") # TO DO: melding elders toevoegen.
+                # print("\nATTENTION: Product already on sold list.\n")
+                # TO DO: bovenstaande melding elders toevoegen.
                 break
         return not_yet_sold
 
@@ -138,13 +139,29 @@ def get_todays_inventory():
     with open(bought_path) as file:
         items = csv.DictReader(file)
         for item in items:
-            item_date = datetime.strptime(item['expiration_date'], '%Y-%m-%d').date()
+            item_date = datetime.strptime(
+                item['expiration_date'], '%Y-%m-%d').date()
             # Get items in bought.csv who aren't expired
             # And check if item isn't in sold.csv list
             if item_date > date and check_if_sold(item['id']):
                 inventory.append(item)
     print(tabulate(inventory, headers="keys", tablefmt="grid"))
 
+
+def get_yesterdays_inventory():
+    """Get yesterday's inventory and show to user"""
+    inventory = []
+    date = date_to_datetime(get_current_date()) - timedelta(days=1)
+    with open(bought_path) as file:
+        items = csv.DictReader(file)
+        for item in items:
+            item_date = datetime.strptime(
+                item['expiration_date'], '%Y-%m-%d').date()
+            # Get items in bought.csv who aren't expired
+            # And check if item isn't in sold.csv list
+            if item_date > date and check_if_sold(item['id']):
+                inventory.append(item)
+    print(tabulate(inventory, headers="keys", tablefmt="grid"))
 
 def reset_date():
     """Function to reset date to current date"""
@@ -203,4 +220,4 @@ if __name__ == "__main__":
     # print(advance_time(2))
     get_todays_inventory()
     # print(get_current_date())
-    #print(date_to_datetime("2022-01-02"))
+    # print(date_to_datetime("2022-01-02"))
