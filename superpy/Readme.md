@@ -11,7 +11,7 @@ Some important features:
 * Feature 3
 
 ## Installation
-1. Doe this
+1. Do this
 2. Then this
 3. Last thing to do
 
