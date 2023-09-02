@@ -1,15 +1,9 @@
 # Imports
 import argparse
 import csv
-from datetime import date
 from tabulate import tabulate
 from functions import (
-    new_id,
-    give_bought_id,
-    get_bought_id,
-    add_sold_item,
     reset_date,
-    check_if_sold,
     count_by_product_name,
     advance_time,
     get_todays_inventory,
@@ -18,7 +12,8 @@ from functions import (
     get_profit_report,
     buy_product,
     sell_product,
-    export_to_csv
+    export_to_csv,
+    make_table
 )
 
 # Do not change these lines.
@@ -146,7 +141,7 @@ def main():
         if args.export:
             list = {"now": args.now, "yesterday": args.yesterday}
             for key, value in list.items():
-                if value == True:
+                if value:
                     category = key
             export_to_csv(category)
         # Make report for how many of each type of product
@@ -155,16 +150,15 @@ def main():
             count_by_product_name()
         # Make a report of current inventory
         elif args.now:
-            get_todays_inventory()
+            make_table(get_todays_inventory())
         # Make a report of yesterday's inventory
         elif args.yesterday:
-            get_yesterdays_inventory()
+            make_table(get_yesterdays_inventory())
         # Print a list of all items in inventory
         else:
             with open(bought_csv_path) as file:
-                items = csv.reader(file)
-                list_header = next(items)
-                print(tabulate(items, headers=list_header, tablefmt="grid"))
+                items = csv.DictReader(file)
+                make_table(items)
 
     elif args.get_report == "revenue":
         # Get today's revenue report

@@ -5,6 +5,7 @@ from rich import print as rprint
 from datetime import date, datetime, timedelta
 from tabulate import tabulate
 
+
 bought_path = "data\\bought.csv"
 sell_path = "data\\sold.csv"
 date_path = "data\\current_day.txt"
@@ -37,7 +38,7 @@ def get_bought_id(product_name):
                 found.append(item[0])
         # No items in list? Return None
         if len(found) == 0:
-            rprint(f'\n:warning:  [bold red]ATTENTION:[/bold red] There is no {product_name}\n')
+            rprint(f"\n:warning:  [bold red]ATTENTION:[/bold red] There is no {product_name}\n")
             return None
         # One item in list? Return ID
         elif len(found) == 1:
@@ -75,6 +76,7 @@ def new_id():
 
 
 def buy_product(product_name, product_price, expiration_date):
+    """Use to buy a product and add it to bought.csv"""
     # Make a list of user input
     new_product = [
         new_id(),
@@ -108,6 +110,7 @@ def buy_product(product_name, product_price, expiration_date):
 
 
 def sell_product(product_name, product_price):
+    """Use to sell a product and add item to sold.csv list"""
     # Make a list of sold product
     sold_product = [
         give_bought_id(),
@@ -206,10 +209,6 @@ def get_todays_inventory():
                 item_expiration_date > date) and (
                     check_if_sold(item['id'])):
                 inventory.append(item)
-    if inventory:
-        print(tabulate(inventory, headers="keys", tablefmt="grid"))
-    else:
-        print("There is nothing in today's inventory.")
     return inventory
 
 
@@ -230,14 +229,19 @@ def get_yesterdays_inventory():
                 item_expiration_date > date) and (
                     check_if_sold(item['id'])):
                 inventory.append(item)
-    if inventory:
-        print(tabulate(inventory, headers="keys", tablefmt="grid"))
-    else:
-        print("There is nothing in yesterday's inventory.")
     return inventory
 
 
+def make_table(inventory):
+    """Show inventory in beautiful table"""
+    if inventory:
+        print(tabulate(inventory, headers="keys", tablefmt="rounded_outline"))
+    else:
+        print("No inventory.")
+
+
 def get_revenue_report(when):
+    """Get reveneu report of today, yesterday or specific date"""
     total_revenue = 0
     if when == "today":
         date = get_current_date()
@@ -258,6 +262,7 @@ def get_revenue_report(when):
 
 
 def get_profit_report(when):
+    """Get profit report of today, yesterday or specific date"""
     total_revenue = 0
     total_buy_price = 0
     bought_check = []
