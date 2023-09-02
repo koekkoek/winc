@@ -1,4 +1,7 @@
 import csv
+import time
+from rich.progress import Progress
+from rich import print as rprint
 from datetime import date, datetime, timedelta
 from tabulate import tabulate
 
@@ -34,7 +37,7 @@ def get_bought_id(product_name):
                 found.append(item[0])
         # No items in list? Return None
         if len(found) == 0:
-            print(f'\nATTENTION: There is no {product_name}\n')
+            rprint(f'\n:warning:  [bold red]ATTENTION:[/bold red] There is no {product_name}\n')
             return None
         # One item in list? Return ID
         elif len(found) == 1:
@@ -69,6 +72,59 @@ def new_id():
         file.seek(0)
         file.write(str(new_id))
         return new_id
+
+
+def buy_product(product_name, product_price, expiration_date):
+    # Make a list of user input
+    new_product = [
+        new_id(),
+        product_name,
+        str(date.today()),
+        product_price,
+        expiration_date
+        ]
+    # Is it a valid list?
+    if None in new_product:
+        print("\nATTENTION: Invalid input.\n")
+        print("Make sure you entered the following arguments:")
+        print("\t--product_name, --product_price, and --expiration_date.\n")
+    else:
+        # Open existing bought CSV file in append mode
+        with open(bought_path, mode='a') as file:
+            # Pass this file object to csv.writer()
+            # and get a writer object
+            add_product = csv.writer(file, delimiter=',', lineterminator='\n')
+            # Pass the list as an argument into
+            # the writerow()
+            add_product.writerow(new_product)
+            # Message when succesfull
+            print("\n=====================================")
+            print("Added the following list of items:\n")
+            n = 0
+            for item in ["ID", "name", "date", "price", "expiration date"]:
+                print(f"Product {item}: {new_product[n]}")
+                n += 1
+            print("=====================================\n")
+
+
+def sell_product(product_name, product_price):
+    # Make a list of sold product
+    sold_product = [
+        give_bought_id(),
+        get_bought_id(product_name),
+        str(date.today()),
+        product_price
+    ]
+    # Is it a valid list?
+    if None in sold_product:
+        print("Make sure you entered the following arguments:")
+        print("\t--product_name and --price.\n")
+    else:
+        # Check if product is already sold
+        not_yet_sold = check_if_sold(sold_product[1])
+        if not_yet_sold:
+            # Not yet sold? Then add list to sold.csv
+            add_sold_item(sold_product)
 
 
 def add_sold_item(sold_product):
@@ -130,6 +186,7 @@ def count_by_product_name():
         for k, v in product_per_type.items():
             print(f"{k}: {v}")
         print("\n============================")
+    return product_per_type
 
 
 def get_todays_inventory():
@@ -153,6 +210,7 @@ def get_todays_inventory():
         print(tabulate(inventory, headers="keys", tablefmt="grid"))
     else:
         print("There is nothing in today's inventory.")
+    return inventory
 
 
 def get_yesterdays_inventory():
@@ -176,6 +234,7 @@ def get_yesterdays_inventory():
         print(tabulate(inventory, headers="keys", tablefmt="grid"))
     else:
         print("There is nothing in yesterday's inventory.")
+    return inventory
 
 
 def get_revenue_report(when):
@@ -196,6 +255,44 @@ def get_revenue_report(when):
             if item['sell_date'] == str(date):
                 total_revenue += float(item['sell_price'])
     return total_revenue
+
+
+def get_profit_report(when):
+    total_revenue = 0
+    total_buy_price = 0
+    bought_check = []
+    if when == "today":
+        date = get_current_date()
+    elif when == "yesterday":
+        date = date_to_datetime(get_current_date())
+        date = date - timedelta(days=1)
+    else:
+        try:
+            date = datetime.strptime(when, '%Y-%m-%d').date()
+        except ValueError:
+            return 'False'
+            date = date_to_datetime("2000-01-01")
+    # Open sold file
+    with open(sell_path) as sell_file:
+        sold_items = csv.DictReader(sell_file)
+        # Iterate over sold items
+        for item in sold_items:
+            # Check is sold date is the same as today
+            if item['sell_date'] == str(date):
+                total_revenue += float(item['sell_price'])
+                bought_check.append(item['bought_id'])
+    # Open bought file and count buy prices
+    with open(bought_path) as bought_file:
+        bought_items = csv.DictReader(bought_file)
+        # Iterate over bought items
+        for item in bought_items:
+            # Check: is id in bought_check list?
+            if item['id'] in bought_check:
+                # Add price to total_buy_price
+                total_buy_price += float(item['buy_price'])
+    # Calculate profit price (revenue - buy_price)
+    profit = total_revenue - total_buy_price
+    return profit
 
 
 def reset_date():
@@ -244,6 +341,27 @@ def date_to_datetime(date):
     return dateformat
 
 
+def export_to_csv(category):
+    """Export inventory report data to CSV file"""
+    if category == "now":
+        data = get_todays_inventory()
+    elif category == "yesterday":
+        data = get_yesterdays_inventory()
+    field_names = ['id', 'product_name', 'buy_price',
+                   'buy_date', 'expiration_date']
+    with open("exports\\csv_report.csv", mode="w", newline='') as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=field_names)
+        writer.writeheader()
+        for d in data:
+            writer.writerow(d)
+    with Progress() as progress:
+        task1 = progress.add_task("[green]Exporting...", total=100)
+        while not progress.finished:
+            progress.update(task1, advance=0.9)
+            time.sleep(0.02)
+    rprint("[green]Finished![/green] Data exported to [u purple]\\exports\\csv_report.csv[/u purple]")
+
+
 if __name__ == "__main__":
     # print(give_bought_id())
     # print(latest_product_id())
@@ -256,12 +374,8 @@ if __name__ == "__main__":
     # get_todays_inventory()
     # print(get_current_date())
     # print(date_to_datetime("2022-01-02"))
-    get_revenue_report("2023-10-01")
-
-
-"""
-# Open bought file
-    with open(bought_path) as bought_file:
-        # Make list of bought file dictionary
-        bought_items = list(csv.DictReader(bought_file))
-"""
+    # get_revenue_report("2023-10-01")
+    # print(get_profit_report("2023-08-30"))
+    # print(get_profit_report("today"))
+    # export_to_csv("now")
+    get_bought_id('bananaaaa')

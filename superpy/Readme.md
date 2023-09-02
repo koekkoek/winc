@@ -2,65 +2,78 @@
 SuperPy is a command-line based inventory management tool designed to keep track of supermarket products. It provides features to record buying and selling activities, produce various reports, and maintain the internal date system for managing transactions.
 
 # Install instructions
-* Install Tabulate via command: pip install tabulate
 
-## Features
-Some important features:
-* Feature 1
-* Feature 2
-* Feature 3
+1. Make sure you have the latest Python version installed.
+2. Download alle files to your computer
+3. Before running the application, instal the following modules:
+    * Install Tabulate via command: pip install tabulate
+4. You can start using the program in your command line interface.
 
-## Installation
-1. Do this
-2. Then this
-3. Last thing to do
-
-## Usage
+## Features and usage tips
 Some examples on how to use Superpy.
 1. **Add product to inventory:**
 
-    python .\main.py buy --product_name \<name> --product_price \<price> --amount \<amount> --expiration_date \<date>
+    python .\super.py buy --product_name \<name> --product_price \<price> --amount \<amount> --expiration_date \<date>
 
 2. **Show list of inventory:**
 
-    * <u>Total list:</u> python .\main.py report inventory
+    Use one of the following commands:
+
+    * <u>Total list:</u> python .\super.py report inventory
     
-    * <u>Today's list (excluding expirated and sold items):</u> python main.py report inventory --now
+    * <u>Today's list (excluding expirated and sold items)</u>: python super.py report inventory --now
+    
+            Want a report of today's list? Use python super.py report inventory --now --report
 
-    * <u>Yesterday's list (excluding expirated and sold items):</u> python main.py report inventory --yesterday
+    * <u>Yesterday's list (excluding expirated and sold items)</u>: python super.py report inventory --yesterday
+            
+            Want a report of yesterday's list? Use python super.py report inventory --yesterday --report
 
-    * <u>Show how many items in inventory by product name:</u> python main.py report inventory --by_type
+    * <u>Show how many items in inventory by product name</u>: python super.py report inventory --by_type
 
 3. **Sell an item:**
 
-    python .\main.py sell --product_name \<name> --price \<price>
+    python .\super.py sell --product_name \<name> --price \<price>
 
     Note: you can's sell an item that's already sold.
 
 4. **Change the date.**
+    
     Use one of the following commands:
 
-    * <u>Reset the date to current day:</u> python main.py reset_date
+    * <u>Reset the date to current day</u>: python super.py reset_date
     
-    * <u>Advance the day to future day:</u> python main.py --advance_time \<numbers of days>
+    * <u>Advance the day to future day</u>: python super.py --advance_time \<numbers of days>
 
 5. **Show revenue:**
+    
     Use one of the following commands:
 
-    * <u>Today's revenue</u> python main.py report revenue --today
+    * <u>Today's revenue</u>: python super.py report revenue --today
 
-    * <u>Yesterday's revenue</u> python main.py report revenue --yesterday
+    * <u>Yesterday's revenue</u>: python super.py report revenue --yesterday
 
-    * <u>Revenue from specific date</u> python main.py report revenue --date \<date_format: YYYY-MM-DD>
+    * <u>Revenue from specific date</u>: python super.py report revenue --date \<date_format: YYYY-MM-DD>
+
+6. **Get profit report:**
+    
+    Use one of the following commands:
+
+    * <u>Today's profit</u>: python super.py report profit --today
+
+    * <u>Yesterday's profit</u>: python super.py report profit --yesterday
+
+    * <u>Profit from specific date</u>: python super.py report profit --date \<date_format: YYYY-MM-DD>
 
 ## Data storage
 The files where all the data is stored:
+
 | File name | Columns |
 | ----------- | ----------- |
 | bought.csv | id, product_name, buy_date, buy_price, expiration_date |
-| sold.cxv | id, ....
-| current_day.txt | Day |
-| id.txt | id |
+| sold.cxv | id, bought_id, sell_date, sell_price |
+| current_day.txt | Current day the computer uses |
+| id.txt | Latest used ID |
 
 # Author
-Michel
+Michel. Need some help? Send an e-mail to helpdesk@superpy.nl
