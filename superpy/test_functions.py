@@ -5,7 +5,8 @@ from functions import (
     new_id,
     reset_date,
     advance_time,
-    date_to_datetime
+    date_to_datetime,
+    get_current_date
 )
 from datetime import date
 
@@ -32,7 +33,8 @@ def test_new_id():
 
 
 def test_reset_date():
-    assert reset_date() == str(date.today())
+    current_date = get_current_date()
+    assert reset_date(current_date) == current_date
 
 
 def test_advance_time():
