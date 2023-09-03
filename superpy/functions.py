@@ -5,7 +5,6 @@ from rich import print as rprint
 from datetime import date, datetime, timedelta
 from tabulate import tabulate
 
-
 bought_path = "data\\bought.csv"
 sell_path = "data\\sold.csv"
 date_path = "data\\current_day.txt"
@@ -240,6 +239,26 @@ def make_table(inventory):
         print("No inventory.")
 
 
+def get_expired_products():
+    """Get expired products which aren't sold"""
+    current_date = date_to_datetime(get_current_date())
+    expired_products = []
+    # Haal producten uit bought lijst die expired zijn
+    # Check of ze niet verkocht zijn.
+    # Kortom: alleen producten die niet verkocht zijn + over datum.
+    with open(bought_path) as bought_file:
+        # Get list of bought products
+        bought_items = csv.DictReader(bought_file)
+        for item in bought_items:
+            # Check if an item is expired.
+            # If so: is it sold?
+            # Expired and not sold? Append to expired_products list
+            item_expiration = date_to_datetime(item['expiration_date'])
+            if current_date > item_expiration and check_if_sold(item['id']):
+                expired_products.append(item)
+    return expired_products
+
+
 def get_revenue_report(when):
     """Get reveneu report of today, yesterday or specific date"""
     total_revenue = 0
@@ -300,12 +319,11 @@ def get_profit_report(when):
     return profit
 
 
-def reset_date():
-    """Function to reset date to current date"""
+def reset_date(new_date):
+    """Function to reset current_day.txt to new date"""
     with open(date_path, mode="w") as file:
-        new_date = date.today().strftime('%Y-%m-%d')
         file.write(new_date)
-        print(f"Current date succesfully updated: {new_date}")
+        rprint(f"Current date succesfully updated: {new_date}")
         return new_date
 
 
@@ -383,4 +401,19 @@ if __name__ == "__main__":
     # print(get_profit_report("2023-08-30"))
     # print(get_profit_report("today"))
     # export_to_csv("now")
-    get_bought_id('bananaaaa')
+    # get_bought_id('bananaaaa')
+    make_table(get_expired_products())
+
+"""
+from rich.console import Console
+from rich.table import Table
+table = Table(title='Expired Products')
+    table.add_column("Product name", justify="center")
+    table.add_column("Date expired", justify="center")
+    for row in expired_products:
+        name = row['product_name']
+        expired = str(row['expiration_date'])
+        table.add_row(name, expired)
+    console = Console()
+    console.print(table)
+"""
