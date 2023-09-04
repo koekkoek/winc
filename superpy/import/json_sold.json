@@ -1,0 +1,68 @@
+[
+    {
+        "id": "1",
+        "bought_id": "27",
+        "sell_date": "2023-09-02",
+        "sell_price": "4.0"
+    },
+    {
+        "id": "2",
+        "bought_id": "2",
+        "sell_date": "2023-09-08",
+        "sell_price": "2.1"
+    },
+    {
+        "id": "3",
+        "bought_id": "15",
+        "sell_date": "2023-09-09",
+        "sell_price": "2.4"
+    },
+    {
+        "id": "4",
+        "bought_id": "16",
+        "sell_date": "2023-09-09",
+        "sell_price": "5.0"
+    },
+    {
+        "id": "5",
+        "bought_id": "17",
+        "sell_date": "2023-09-10",
+        "sell_price": "1.6"
+    },
+    {
+        "id": "6",
+        "bought_id": "19",
+        "sell_date": "2023-09-11",
+        "sell_price": "3.0"
+    },
+    {
+        "id": "7",
+        "bought_id": "20",
+        "sell_date": "2023-09-12",
+        "sell_price": "4.5"
+    },
+    {
+        "id": "8",
+        "bought_id": "21",
+        "sell_date": "2023-09-10",
+        "sell_price": "2.0"
+    },
+    {
+        "id": "9",
+        "bought_id": "24",
+        "sell_date": "2023-09-04",
+        "sell_price": "3.5"
+    },
+    {
+        "id": "10",
+        "bought_id": "27",
+        "sell_date": "2023-08-30",
+        "sell_price": "1.9"
+    },
+    {
+        "id": "11",
+        "bought_id": "28",
+        "sell_date": "2023-09-01",
+        "sell_price": "2.2"
+    }
+]

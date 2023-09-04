@@ -1,7 +1,6 @@
 # Imports
 import argparse
 import csv
-from re import search as rsearch
 from rich import print as rprint
 from functions import (
     reset_date,
@@ -14,8 +13,11 @@ from functions import (
     buy_product,
     sell_product,
     export_to_csv,
+    export_to_json,
+    import_new_data,
     get_expired_products,
-    make_table
+    make_table,
+    it_is_a_valid_input
 )
 
 # Do not change these lines.
@@ -41,12 +43,23 @@ def main():
         description="Subcommands",
         help="Additional help")
 
+    # Create parser for importing data
+    import_parser = subparser.add_parser(
+        "import",
+        help="Use to add new data for demo"
+    )
+    import_parser.add_argument(
+        "--json",
+        action="store_true",
+        help="For importing in json format"
+    )
     # Create parser for advancing time
     time_parser = subparser.add_parser(
         "advance_time",
         help="Use to add days to advance current day")
     time_parser.add_argument(
         "days",
+        type=int,
         help="Add number of days to advance and set as new today"
     )
 
@@ -134,6 +147,11 @@ def main():
         action="store_true",
         help="Use to export data in CSV file"
     )
+    parser_report_inventory.add_argument(
+        "--export_json",
+        action="store_true",
+        help="Use to export data in a JSON file"
+    )
 
     # Create revenue parser
     revenue_report_parser = subparser_report.add_parser(
@@ -174,23 +192,38 @@ def main():
     args = parser.parse_args()
 
     if args.command == "set_date":
-        valid_date = rsearch("^[0-9]{4}-[0-9]{2}-[0-9]{2}$", args.date)
-        if valid_date:
+        if it_is_a_valid_input("date", args.date):
+            # Valid date? -> Update current_day.txt with new date
             reset_date(args.date)
         else:
+            # Not a valid date? Return error message
             msg = f"[bold red]'{args.date}'[/bold red] is an invalid input. "
             msg += "Use this format: [green]YYYY-MM-DD[/green]"
             rprint(msg)
 
     elif args.command == "advance_time":
-        advance_time(args.advance_time)
+        advance_time(args.days)
 
     elif args.command == "buy":
-        buy_product(args.product_name, args.product_price,
-                    args.expiration_date)
+        check_name = it_is_a_valid_input("product_name", args.product_name)
+        check_date = it_is_a_valid_input("date", args.expiration_date)
+        check_price = args.product_price > 0
+        if check_name and check_date and check_price:
+            buy_product(args.product_name, args.product_price,
+                        args.expiration_date)
+        else:
+            rprint("""
+                \n[red]User input invalid.[/red] Please check:\n
+    * Please check name: allowed characters: [green]a-z, A-Z, 0-9 and _[/green]
+    * Please check price: is it a [green]positive number?[/green]
+    * Please check date format: [green]YYYY-MM-DD[/green]\n
+                   """)
 
     elif args.command == "sell":
-        sell_product(args.product_name, args.price)
+        check_name = it_is_a_valid_input("product_name", args.product_name)
+        check_price = args.price > 0
+        if check_name and check_price:
+            sell_product(args.product_name, args.price)
 
     elif args.command == "report":
         if args.report_type == "inventory":
@@ -202,6 +235,14 @@ def main():
                         category = key
                 if category:
                     export_to_csv(category)
+            if args.export_json:
+                category = False
+                list = {"now": args.now, "yesterday": args.yesterday}
+                for key, value in list.items():
+                    if value:
+                        category = key
+                if category:
+                    export_to_json(category)
             # Make report for how many of each type of product
             # the supermarket currently holds
             elif args.by_type is True:
@@ -274,6 +315,8 @@ def main():
             # No arguments? Show some help
             else:
                 revenue_report_parser.print_help()
+    elif args.command == "import":
+        import_new_data()
     # No arguments? Show some help
     else:
         profit_report_parser.print_help()

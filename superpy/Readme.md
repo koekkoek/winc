@@ -6,46 +6,53 @@ SuperPy is a command-line based inventory management tool designed to keep track
 1. Make sure you have the latest Python version installed.
 2. Download alle files to your computer
 3. Before running the application, instal the following modules:
+    * Install Rich via command: pip install rich
     * Install Tabulate via command: pip install tabulate
 4. You can start using the program in your command line interface.
 
 ## Features and usage tips
 Some examples on how to use Superpy.
-1. **Add product to inventory:**
+1. **Want to try super.py with demo data? Use:**
 
-    python .\super.py buy --product_name \<name> --product_price \<price> --amount \<amount> --expiration_date \<date>
+    python super.py import --json
 
-2. **Show list of inventory:**
+2. **Add product to inventory:**
+
+    python super.py buy --product_name \<name> --product_price \<price> --amount \<amount> --expiration_date \<date>
+
+3. **Show list of inventory:**
 
     Use one of the following commands:
 
-    * <u>Total list:</u> python .\super.py report inventory
+    * <u>Total list:</u> python super.py report inventory
     
     * <u>Today's list (excluding expirated and sold items)</u>: python super.py report inventory --now
     
-            Want a report of today's list? Use python super.py report inventory --now --report
+            Want to export today's report list in a CSV file? Use python super.py report inventory --now --export
+            Want to export today's report list in a JSON file? Use python super.py report inventory --now --export_json 
 
     * <u>Yesterday's list (excluding expirated and sold items)</u>: python super.py report inventory --yesterday
             
-            Want a report of yesterday's list? Use python super.py report inventory --yesterday --report
+            Want to export yesterday's report list in a CSV file? Use python super.py report inventory --yesterday --export
+            Want to export yesterday's report list in a JSON file? Use python super.py report inventory --yesterday --export_json
 
     * <u>Show how many items in inventory by product name</u>: python super.py report inventory --by_type
 
-3. **Sell an item:**
+4. **Sell an item:**
 
-    python .\super.py sell --product_name \<name> --price \<price>
+    python super.py sell --product_name \<name> --price \<price>
 
     Note: you can's sell an item that's already sold.
 
-4. **Change the date.**
+5. **Change the date.**
     
     Use one of the following commands:
 
-    * <u>Reset the date to current day</u>: python super.py reset_date
+    * <u>Reset the date to current day</u>: python super.py reset_date \<date_format: YYYY-MM-DD>
     
     * <u>Advance the day to future day</u>: python super.py --advance_time \<numbers of days>
 
-5. **Show revenue:**
+6. **Show revenue:**
     
     Use one of the following commands:
 
@@ -55,7 +62,7 @@ Some examples on how to use Superpy.
 
     * <u>Revenue from specific date</u>: python super.py report revenue --date \<date_format: YYYY-MM-DD>
 
-6. **Get profit report:**
+7. **Get profit report:**
     
     Use one of the following commands:
 

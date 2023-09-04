@@ -1,7 +1,9 @@
 import csv
 import time
+import json
 from rich.progress import Progress
 from rich import print as rprint
+from re import search as rsearch
 from datetime import date, datetime, timedelta
 from tabulate import tabulate
 
@@ -37,7 +39,9 @@ def get_bought_id(product_name):
                 found.append(item[0])
         # No items in list? Return None
         if len(found) == 0:
-            rprint(f"\n:warning:  [bold red]ATTENTION:[/bold red] There is no {product_name}\n")
+            msg = "\n:warning:  [bold red]ATTENTION:[/bold red] "
+            msg += f"There is no {product_name}\n"
+            rprint(msg)
             return None
         # One item in list? Return ID
         elif len(found) == 1:
@@ -336,7 +340,7 @@ def advance_time(number_of_days: int):
         # Get current date
         current_date = file.read()
         # Get current date in datetime format
-        date_datetime = datetime.strptime(current_date, '%Y-%m-%d').date()
+        date_datetime = date_to_datetime(current_date)
         # Add days
         new_date = date_datetime + timedelta(days=number_of_days)
         # Change datetime format back to string
@@ -366,13 +370,15 @@ def date_to_datetime(date):
 
 def export_to_csv(category):
     """Export inventory report data to CSV file"""
+    date_id = datetime.today().date()
+    file_name = f"exports\\csv_report_{date_id}.csv"
     if category == "now":
         data = get_todays_inventory()
     elif category == "yesterday":
         data = get_yesterdays_inventory()
     field_names = ['id', 'product_name', 'buy_price',
                    'buy_date', 'expiration_date']
-    with open("exports\\csv_report.csv", mode="w", newline='') as csv_file:
+    with open(file_name, mode="w", newline='') as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=field_names)
         writer.writeheader()
         for d in data:
@@ -382,7 +388,92 @@ def export_to_csv(category):
         while not progress.finished:
             progress.update(task1, advance=0.9)
             time.sleep(0.02)
-    rprint("[green]Finished![/green] Data exported to [u purple]\\exports\\csv_report.csv[/u purple]")
+    msg = "[green]Finished![/green] Data exported to "
+    msg += f"[u purple]{file_name}[/u purple]"
+    rprint(msg)
+
+
+def export_to_json(category):
+    """Export inventory report data to json file"""
+    date_id = datetime.today().date()
+    file_name = f"exports\\json_report_{date_id}.json"
+    if category == "now":
+        data = get_todays_inventory()
+        # data_json = json.dumps(data, indent=4)
+    elif category == "yesterday":
+        data = get_yesterdays_inventory()
+        # data_json = json.dumps(data, indent=4)
+    with open(file_name, mode="w", newline='') as json_file:
+        json.dump(data, json_file, indent=4)
+    with Progress() as progress:
+        task1 = progress.add_task("[green]Exporting...", total=100)
+        while not progress.finished:
+            progress.update(task1, advance=0.9)
+            time.sleep(0.02)
+    msg = "[green]Finished![/green] JSON data exported to "
+    msg += f"[u purple]{file_name}[/u purple]"
+    rprint(msg)
+
+
+def it_is_a_valid_input(category, input):
+    """Function to check if users input contains valid data."""
+    # Define Regular Expressions
+    valid_date_data = "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$"
+    text = "^[a-zA-Z0-9_]+$"
+    # Check users input for valid date
+    if category == "date":
+        return rsearch(valid_date_data, input)
+    if category == "product_name":
+        return rsearch(text, input)
+
+
+def import_new_data():
+    # Get bought data in JSON format
+    with open("import\\json_bought.json") as json_file:
+        json_data = json.load(json_file)
+    # Add JSON data to CSV bought file
+    with open(bought_path, mode="w", newline="") as bought_file:
+        csv_writer = csv.writer(bought_file)
+        # Count var for writing headers to CSV file
+        count = 0
+        for row in json_data:
+            if count == 0:
+                header = row.keys()
+                csv_writer.writerow(header)
+                count += 1
+            # Writing JSON data to CSV file
+            csv_writer.writerow(row.values())
+    # Get sold data in JSON format
+    with open("import\\json_sold.json") as json_file:
+        json_data = json.load(json_file)
+    # Add JSON data to CSV data file
+    with open(sell_path, mode="w", newline="") as sold_file:
+        csv_writer = csv.writer(sold_file)
+        # Count var for writing headers to CSV file
+        count = 0
+        for row in json_data:
+            if count == 0:
+                header = row.keys()
+                csv_writer.writerow(header)
+                count += 1
+            # Writing JSON data to CSV file
+            csv_writer.writerow(row.values())
+    # Set date
+    with open("import\\standard_day.txt") as day_file:
+        day_data = day_file.read()
+        if day_data == "":
+            day_data = "2023-09-07"
+    with open("data\\current_day.txt", mode="w") as current_day:
+        current_day.write(day_data)
+    # Set id
+    with open("import\\standard_id.txt") as id_file:
+        id_data = id_file.read()
+        if id_data == "":
+            id_data = "30"
+    with open("data\\id.txt", mode="w") as current_id:
+        current_id.write(id_data)
+    # Print succes message
+    rprint("[green]Succesfully[/green] imported all data to csv file.")
 
 
 if __name__ == "__main__":
@@ -403,17 +494,3 @@ if __name__ == "__main__":
     # export_to_csv("now")
     # get_bought_id('bananaaaa')
     make_table(get_expired_products())
-
-"""
-from rich.console import Console
-from rich.table import Table
-table = Table(title='Expired Products')
-    table.add_column("Product name", justify="center")
-    table.add_column("Date expired", justify="center")
-    for row in expired_products:
-        name = row['product_name']
-        expired = str(row['expiration_date'])
-        table.add_row(name, expired)
-    console = Console()
-    console.print(table)
-"""
