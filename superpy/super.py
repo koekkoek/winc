@@ -192,8 +192,8 @@ def main():
     args = parser.parse_args()
 
     if args.command == "set_date":
+        # Valid date? Then update current_day.txt with new date
         if it_is_a_valid_input("date", args.date):
-            # Valid date? -> Update current_day.txt with new date
             reset_date(args.date)
         else:
             # Not a valid date? Return error message
@@ -227,6 +227,7 @@ def main():
 
     elif args.command == "report":
         if args.report_type == "inventory":
+            # Export today's or yesterday's inventory report to CVS file
             if args.export:
                 category = False
                 list = {"now": args.now, "yesterday": args.yesterday}
@@ -235,7 +236,8 @@ def main():
                         category = key
                 if category:
                     export_to_csv(category)
-            if args.export_json:
+            # Export today's or yesterday's inventory report to JSON file
+            elif args.export_json:
                 category = False
                 list = {"now": args.now, "yesterday": args.yesterday}
                 for key, value in list.items():

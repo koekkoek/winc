@@ -23,8 +23,6 @@ def give_bought_id():
             return last_item + 1
         else:
             return 1
-        # Pay Attention: should I always return 1? Can it cause problems?
-        # Should I fist check if first line exist? If not: make it?
 
 
 def get_bought_id(product_name):
@@ -48,7 +46,6 @@ def get_bought_id(product_name):
             return found[0]
         # Multiple items in list? Return all
         else:
-            # To do: what to do with multiple products? Return all?
             return found[0]
 
 
@@ -164,8 +161,6 @@ def check_if_sold(product_sold_id):
             if row['bought_id'] == product_sold_id:
                 # If it is in the list. Then switch 'not_yet_sold' to False.
                 not_yet_sold = False
-                # print("\nATTENTION: Product already on sold list.\n")
-                # TO DO: bovenstaande melding elders toevoegen.
                 break
         return not_yet_sold
 
@@ -247,9 +242,6 @@ def get_expired_products():
     """Get expired products which aren't sold"""
     current_date = date_to_datetime(get_current_date())
     expired_products = []
-    # Haal producten uit bought lijst die expired zijn
-    # Check of ze niet verkocht zijn.
-    # Kortom: alleen producten die niet verkocht zijn + over datum.
     with open(bought_path) as bought_file:
         # Get list of bought products
         bought_items = csv.DictReader(bought_file)
@@ -363,7 +355,6 @@ def get_current_date():
 
 def date_to_datetime(date):
     """Formate date text to datetime object"""
-    # TO DO: Check users input / try?
     dateformat = datetime.strptime(date, '%Y-%m-%d').date()
     return dateformat
 
@@ -419,15 +410,16 @@ def it_is_a_valid_input(category, input):
     """Function to check if users input contains valid data."""
     # Define Regular Expressions
     valid_date_data = "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$"
-    text = "^[a-zA-Z0-9_]+$"
+    valid_text = "^[a-zA-Z0-9_]+$"
     # Check users input for valid date
     if category == "date":
         return rsearch(valid_date_data, input)
     if category == "product_name":
-        return rsearch(text, input)
+        return rsearch(valid_text, input)
 
 
 def import_new_data():
+    """Function to import standard data to try superpy as a demo"""
     # Get bought data in JSON format
     with open("import\\json_bought.json") as json_file:
         json_data = json.load(json_file)

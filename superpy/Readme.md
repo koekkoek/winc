@@ -4,7 +4,7 @@ SuperPy is a command-line based inventory management tool designed to keep track
 # Install instructions
 
 1. Make sure you have the latest Python version installed.
-2. Download alle files to your computer
+2. Download all files to your computer
 3. Before running the application, instal the following modules:
     * Install Rich via command: pip install rich
     * Install Tabulate via command: pip install tabulate
