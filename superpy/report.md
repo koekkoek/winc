@@ -192,7 +192,7 @@ Gebruik de volgende commando in je CLI:
 
 Wil je liever het overzicht van gisteren? Gebruik dan:
 
-    python super.py report inventory --today
+    python super.py report inventory --yesterday
 
 # Verdere verbeteringen
 Ik heb veel geleerd van dit project en zie ook nog de volgende mogelijke verbeteringen:
