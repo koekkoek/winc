@@ -14,7 +14,7 @@ SuperPy is a command-line based inventory management tool designed to keep track
 Some examples on how to use Superpy.
 1. **Want to try super.py with demo data? Use:**
 
-    python super.py import --json
+    python super.py import
 
 2. **Add product to inventory:**
 
