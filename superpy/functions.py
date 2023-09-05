@@ -291,7 +291,6 @@ def get_profit_report(when):
             date = datetime.strptime(when, '%Y-%m-%d').date()
         except ValueError:
             return 'False'
-            date = date_to_datetime("2000-01-01")
     # Open sold file
     with open(sell_path) as sell_file:
         sold_items = csv.DictReader(sell_file)
@@ -323,7 +322,7 @@ def reset_date(new_date):
         return new_date
 
 
-def advance_time(number_of_days: int):
+def advance_time(number_of_days: int) -> str:
     """Function to advance days with users input"""
     if number_of_days <= 0:
         print("Please use a positive number.")
