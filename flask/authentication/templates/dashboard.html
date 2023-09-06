@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- Your solution here. -->
+<p>{{session.username}}'s hobby's</p>
+{% if session.username == 'Alice' %}
+<p>Tennis, soccer and piano</p>
+{% elif session.username == 'Bob' %}
+<p>Fifa, dinning with friends and reading books</p>
+{% endif %}
+{% endblock content %}
+
