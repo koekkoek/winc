@@ -1,15 +1,16 @@
 import csv
 import time
 import json
+from os import path
 from rich.progress import Progress
 from rich import print as rprint
 from re import search as rsearch
 from datetime import date, datetime, timedelta
 from tabulate import tabulate
 
-bought_path = "data\\bought.csv"
-sell_path = "data\\sold.csv"
-date_path = "data\\current_day.txt"
+bought_path = path.join("data", "bought.csv")
+sell_path = path.join("data", "sold.csv")
+date_path = path.join("data", "current_day.txt")
 
 
 def give_bought_id():
@@ -109,15 +110,26 @@ def buy_product(product_name, product_price, expiration_date):
             print("=====================================\n")
 
 
-def sell_product(product_name, product_price):
+def sell_product(product_name, product_price, next_product_id=""):
     """Use to sell a product and add item to sold.csv list"""
-    # Make a list of sold product
-    sold_product = [
-        give_bought_id(),
-        get_bought_id(product_name),
-        str(date.today()),
-        product_price
-    ]
+    # First iteration of selling a product?
+    if next_product_id == "":
+        # Make a list of sold product
+        sold_product = [
+            give_bought_id(),
+            get_bought_id(product_name),
+            str(date.today()),
+            product_price
+        ]
+    # Not the first iteration of this function, then...
+    else:
+        # Make a list of next sold item
+        sold_product = [
+            give_bought_id(),
+            next_product_id,
+            str(date.today()),
+            product_price
+        ]
     # Is it a valid list?
     if None in sold_product:
         print("Make sure you entered the following arguments:")
@@ -125,9 +137,59 @@ def sell_product(product_name, product_price):
     else:
         # Check if product is already sold
         not_yet_sold = check_if_sold(sold_product[1])
-        if not_yet_sold:
-            # Not yet sold? Then add list to sold.csv
+        # Check if product is not expired.
+        expiration_date = get_expiration_date(sold_product[1])
+        expiration_date = date_to_datetime(expiration_date)
+        current_date = date_to_datetime(get_current_date())
+        is_not_expired = current_date <= expiration_date
+        if not_yet_sold and is_not_expired:
+            # Not yet sold and expired? Then add list to sold.csv
             add_sold_item(sold_product)
+        else:
+            # Find next product_id
+            next_product_id = get_next_sold_product_id(
+                sold_product[1],
+                product_name
+                )
+            if next_product_id is not None:
+                # Try selling next product
+                sell_product(
+                    product_name,
+                    product_price,
+                    next_product_id=next_product_id
+                )
+            else:
+                rprint("\n[red]Error![/red] You can't sell this product.")
+                print("All products in inventory are already sold or expired.")
+
+
+def get_expiration_date(product_id):
+    """Get the expiration date of a product."""
+    # Haal product op dat verkocht moet worden
+    with open(bought_path) as file:
+        bought_products = csv.reader(file)
+        for product in bought_products:
+            if product[0] == product_id:
+                return product[4]
+
+
+def get_next_sold_product_id(bought_id, product_name):
+    # Get dict of all same bought product names
+    bought_product_list = []
+    with open(bought_path) as file:
+        bought_products = csv.reader(file)
+        for b_product in bought_products:
+            if b_product[1] == product_name:
+                bought_product_list.append(b_product[0])
+    # Get index of current bough_id
+    index_in_list = bought_product_list.index(bought_id)
+    # Try to find next bough_id and return it
+    try:
+        next_product_id = bought_product_list[index_in_list+1]
+        return (next_product_id)
+    # No new bough_id? -> return None
+    except IndexError:
+        return None
 
 
 def add_sold_item(sold_product):
@@ -203,7 +265,7 @@ def get_todays_inventory():
                 item['expiration_date'], '%Y-%m-%d').date()
             # Get items in bought.csv who aren't expired
             # And check if item isn't in sold.csv list
-            if date > item_buy_date and (
+            if date >= item_buy_date and (
                 item_expiration_date > date) and (
                     check_if_sold(item['id'])):
                 inventory.append(item)
@@ -415,6 +477,11 @@ def it_is_a_valid_input(category, input):
         return rsearch(valid_date_data, input)
     if category == "product_name":
         return rsearch(valid_text, input)
+    if category == "expiration":
+        current_date = date_to_datetime(get_current_date())
+        expiration_date = date_to_datetime(input)
+        if expiration_date >= current_date:
+            return True
 
 
 def import_new_data():
@@ -484,4 +551,5 @@ if __name__ == "__main__":
     # print(get_profit_report("today"))
     # export_to_csv("now")
     # get_bought_id('bananaaaa')
+    # get_next_sold_product('34', 'pumpkin')
     make_table(get_expired_products())

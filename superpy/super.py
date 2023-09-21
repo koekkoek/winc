@@ -1,6 +1,5 @@
 # Imports
 import argparse
-import csv
 from rich import print as rprint
 from functions import (
     reset_date,
@@ -17,7 +16,7 @@ from functions import (
     import_new_data,
     get_expired_products,
     make_table,
-    it_is_a_valid_input
+    it_is_a_valid_input,
 )
 
 # Do not change these lines.
@@ -27,8 +26,6 @@ __human_name__ = "superpy"
 
 # Your code below this line.
 def main():
-    bought_csv_path = "data\\bought.csv"
-
     # Argparse Koekkoek's SuperPy
     parser = argparse.ArgumentParser(
         prog="Koekkoek's SuperPy",
@@ -207,8 +204,9 @@ def main():
     elif args.command == "buy":
         check_name = it_is_a_valid_input("product_name", args.product_name)
         check_date = it_is_a_valid_input("date", args.expiration_date)
+        not_expired = it_is_a_valid_input("expiration", args.expiration_date)
         check_price = args.product_price > 0
-        if check_name and check_date and check_price:
+        if check_name and check_date and check_price and not_expired:
             buy_product(args.product_name, args.product_price,
                         args.expiration_date)
         else:
@@ -216,7 +214,8 @@ def main():
                 \n[red]User input invalid.[/red] Please check:\n
     * Please check name: allowed characters: [green]a-z, A-Z, 0-9 and _[/green]
     * Please check price: is it a [green]positive number?[/green]
-    * Please check date format: [green]YYYY-MM-DD[/green]\n
+    * Please check date format: [green]YYYY-MM-DD[/green]
+    * Please check expiration date: [green]is the date in the future?[/green]\n
                    """)
 
     elif args.command == "sell":
@@ -260,9 +259,7 @@ def main():
                 make_table(get_expired_products())
             # Print a list of all items in inventory
             else:
-                with open(bought_csv_path) as file:
-                    items = csv.DictReader(file)
-                    make_table(items)
+                make_table(get_todays_inventory())
 
         elif args.report_type == "revenue":
             # Get today's revenue report

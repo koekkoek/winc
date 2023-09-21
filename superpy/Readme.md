@@ -18,7 +18,7 @@ Some examples on how to use Superpy.
 
 2. **Add product to inventory:**
 
-    python super.py buy --product_name \<name> --product_price \<price> --amount \<amount> --expiration_date \<date>
+    python super.py buy --product_name \<name> --product_price \<price> --expiration_date \<date>
 
 3. **Show list of inventory:**
 
@@ -48,9 +48,9 @@ Some examples on how to use Superpy.
     
     Use one of the following commands:
 
-    * <u>Reset the date to current day</u>: python super.py reset_date \<date_format: YYYY-MM-DD>
+    * <u>Reset the date to current day</u>: python super.py set_date \<date_format: YYYY-MM-DD>
     
-    * <u>Advance the day to future day</u>: python super.py --advance_time \<numbers of days>
+    * <u>Advance the day to future day</u>: python super.py advance_time \<numbers of days>
 
 6. **Show revenue:**
     
